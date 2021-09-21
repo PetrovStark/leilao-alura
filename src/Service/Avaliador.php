@@ -9,6 +9,7 @@ class Avaliador
     private $maiorValor;
     private $menorValor;
     private $vencedor;
+    private $topLances = [];
     
     public function getMaiorValor()
     {
@@ -25,6 +26,14 @@ class Avaliador
         return $this->vencedor;
     }
 
+    public function getTopLances()
+    {
+        return $this->topLances;
+    }
+
+    /**
+     * Avalia os dados de um leilão.
+     */
     public function avalia(Leilao $leilao): void
     {
         $lances = $leilao->getLances();
@@ -49,6 +58,7 @@ class Avaliador
             return ($lanceA < $lanceB) ? -1 : 1;
         });
 
+        # Definindo maior e menor lance, associando valores a instância da classe.
         $menorLance = $lances[0];
         $maiorLance = $lances[count($lances) - 1];
 
@@ -64,5 +74,17 @@ class Avaliador
         if ($this->maiorValor === 0) {
             $this->vencedor = null;
         }
+
+        # Buscando os 3 maiores lances do leilão.
+        $count = 0;
+        foreach ($lances as $lance) {
+            if ($count >= count($lances) - 3) {
+                $this->topLances[] = $lance;
+            }
+
+            $count++;
+        }
+
+        $this->topLances = array_reverse($this->topLances);
     }
 }
